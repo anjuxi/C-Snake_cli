@@ -1,56 +1,72 @@
 # Snake (Command-Line Version)
 
-A classic Snake game written in C for the Windows console.
+English | [简体中文](README.zh-CN.md)
 
-![C](https://img.shields.io/badge/language-C-blue.svg)
+A small Snake game for the Windows console, written in C.
+
+![Language](https://img.shields.io/badge/language-C-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-green.svg)
+![Compiler](https://img.shields.io/badge/compiler-MinGW%20%7C%20MSVC-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-yellow.svg)
 
-## About
+## Introduction
 
-A console Snake game in C with the full game loop and a few extras: two control schemes, a temporary speed boost, persistent high scores, and adjustable base speed.
+![試玩](試玩.png)
 
-## Features
+This is a console version of Snake for Windows. The board is 80 × 22 cells, and the panel on the right keeps the score, snake length, moving interval and boost state in view while you play.
 
-- Classic Snake gameplay
-- Arrow keys or WASD
-- Hold a direction key for a temporary 2× speed boost
-- Live score and high score (saved to a file)
-- Adjustable base speed with `+` / `-`
-- Pause/resume with `P`
-- Game-over screen
-- Colored console output
-- Prevents the snake from reversing directly into itself
+You steer with the arrow keys or WASD. Holding a direction key moves the snake at 2× speed, `+` and `-` change the base speed, and the best score is written to `snake_highscore.txt` when the round ends. Hitting a wall or your own body ends the round; filling the whole board counts as a win.
 
-## Rules
+The whole game is one C file with no third-party libraries. The only platform dependency is the Win32 console API, used for window sizing, colors and cursor control.
 
-1. Use the arrow keys or WASD to steer the snake.
-2. Eating a ★ grows the snake and adds 10 points.
-3. Hitting a wall or your own body ends the game.
-4. Hold a direction key to move faster temporarily.
-5. Press `P` to pause; press any key to resume.
-6. Press `+` to speed up the base speed, `-` to slow it down.
-7. Press `X` to quit.
+```mermaid
+flowchart TD
+    A[Start] --> B[Resize console, init snake]
+    B --> C[Read keyboard]
+    C --> D[Move one cell]
+    D --> E{Food?}
+    E -- Yes --> F[Grow, score +10, maybe speed up]
+    E -- No --> G{Hit wall or body?}
+    F --> G
+    G -- Yes --> H[Game over screen]
+    G -- No --> I[Redraw changed cells]
+    I --> J[Wait in 5 ms slices]
+    J --> C
+    H --> K[Save high score]
+```
 
-## Controls
+## Dependencies
 
-| Key | Action |
-| ----------- | ----------------- |
-| ↑↓←→ / WASD | Steer the snake |
-| Hold a direction key | Temporary 2× speed |
-| P | Pause/resume |
-| + / = | Increase base speed |
-| - / _ | Decrease base speed |
-| X | Quit |
+- C99 compiler: MinGW-w64 GCC or MSVC
+- Windows 10 / 11, for the console API
+- No third-party libraries
 
-## Build and Run
+## Project Structure
+
+```text
+.
+├── 贪吃蛇（命令行版）.c   # game source
+├── snake_highscore.txt    # saved high score
+├── README.md              # English documentation
+├── README.zh-CN.md        # Chinese documentation
+├── LICENSE
+└── .gitignore
+```
+
+## Usage
 
 ### Build
 
-Use a C compiler that supports the Windows API (MinGW or MSVC):
+MinGW:
 
 ```bash
-gcc 贪吃蛇（命令行版）.c -o snake.exe -lmsvcrt
+gcc "贪吃蛇（命令行版）.c" -O2 -o snake.exe
+```
+
+MSVC:
+
+```bash
+cl /O2 /utf-8 "贪吃蛇（命令行版）.c" /Fe:snake.exe
 ```
 
 ### Run
@@ -59,39 +75,36 @@ gcc 贪吃蛇（命令行版）.c -o snake.exe -lmsvcrt
 snake.exe
 ```
 
-Or double-click `a.exe` (a prebuilt binary).
+Start it from the project folder so the high score file is created next to the source.
 
-## Files
+### Controls
 
-- `贪吃蛇（命令行版）.c` — main source
-- `snake_highscore.txt` — high-score file
-- `a.exe` — prebuilt executable
+| Key | Action |
+| --- | --- |
+| Arrow keys / WASD | Steer the snake |
+| Hold a direction key | Temporary 2× speed |
+| `P` | Pause / resume |
+| `+` or `=` | Increase base speed |
+| `-` or `_` | Decrease base speed |
+| `X` | Quit |
 
-## Implementation
+### Notes
 
-- Language: C
-- Window control: Windows API
-- Interface: console output
-- Persistence: file read/write for the high score
+- The source is saved as UTF-8, and the game switches the console code page itself.
+- The window is resized on startup; if the console does not allow it, the game falls back to the `mode con` command.
+- Each frame only redraws the cells that changed, so the display stays stable at higher speeds.
 
-## Development Notes
+## Contributing
 
-The source has detailed comments in Chinese and is meant partly as a learning reference. It is organized as:
+Bug reports and pull requests are welcome. Please keep the single-file layout and the existing comment style. Before opening a pull request, build once with warnings enabled:
 
-1. Includes — standard library and Windows API
-2. Constants — game parameters
-3. Data structures — snake, food, game state
-4. Function declarations
-5. `main` — game loop
-6. Function implementations
+```bash
+gcc "贪吃蛇（命令行版）.c" -O2 -Wall -Wextra -o snake.exe
+```
 
-## Author
+## Contact
 
 **Dr. Ailan Anjuxi (谙弆悕)**
 
-- Email: `anjuxi.ME@outlook.com`
-- SIP: `sip:anjuxi@sip.linphone.org`
-
----
-
-© 2026 Ailan Anjuxi. All rights reserved.
+- 📫 Email: `anjuxi.ME@outlook.com`
+- 📞 SIP: `sip:anjuxi@sip.linphone.org`
